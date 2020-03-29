@@ -38,6 +38,9 @@ def parse_to_compositional_tokens(code):
     walker = antlr4.ParseTreeWalker()
     walker.walk(printer, tree)
 
+    # CyclomaticComplexityVisitor mv = new CyclomaticComplexityVisitor();
+    # mv.visit(tree);
+
     return printer.get_result()
 
 def parse_ast_tokens(codeList):
@@ -59,11 +62,7 @@ def create_clusters(labels):
             clusters[c].append(i)
     return clusters
 
-def run_ngram(codeList):
-    # Hyper parameters
-    ngrams = (3, 3)
-    n_components = 50
-
+def run_ngram(codeList, ngrams=(3,3), n_components=50):
     documents = len(codeList)
     tlist, nlist = parse_ast_tokens(codeList)
     df = pd.DataFrame({ "token_stream": tlist, "normalized": nlist })

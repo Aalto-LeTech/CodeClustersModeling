@@ -17,7 +17,7 @@ You should have Python >=3.5 installed, pyenv or mkvirtualenv for creating virtu
 
 You can install new dependencies without stopping the notebook, just open another terminal and remember to activate the virtualenv eg: `workon cc`. Then just use pip: `pip install tensorflow`. **Remember** to save the new library if you use it in some models: `pip freeze > dev-requirements.txt`
 
-## How to install server
+## How to install the model server
 
 The same prerequisites as in the notebook-setup.
 
@@ -26,3 +26,15 @@ The same prerequisites as in the notebook-setup.
 3. Due to some weird unimaginable things, installation of psycopg2 didn't work directly on macOS. So following this [thread](https://stackoverflow.com/questions/26288042/error-installing-psycopg2-library-not-found-for-lssl) what I had to do was: `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install psycopg2`. But first try just `pip install psycopg2` to see if it works
 4. Copy the example environment variables if you haven't already: `cp .example.env .env`
 5. Launch the dev-ser with: `./dev.sh` NOTE: there is some problems with Flask not triggering properly on code changes
+
+## Installing ANTLR
+
+I have already added the required files to run ANTLR locally, but if you for some reason need to reinstall ANTLR this is how I did it (20.3.2020).
+
+```bash
+wget http://www.antlr.org/download/antlr-4.8-complete.jar
+wget https://raw.githubusercontent.com/antlr/grammars-v4/master/java/java/JavaLexer.g4
+wget https://raw.githubusercontent.com/antlr/grammars-v4/master/java/java/JavaParser.g4
+java -jar ./antlr-4.8-complete.jar -Dlanguage=Python3 ./JavaLexer.g4
+java -jar ./antlr-4.8-complete.jar -Dlanguage=Python3 ./JavaParser.g4
+```
