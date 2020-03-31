@@ -55,14 +55,13 @@ def parse_ast_tokens(codeList):
 def create_clusters(labels):
     clusters = {}
     for i, c in enumerate(labels):
-        if c == -1: continue
         if not c in clusters:
             clusters[c] = [i]
         else:
             clusters[c].append(i)
     return clusters
 
-def run_ngram(codeList, ngrams=(3,3), n_components=50):
+def run_ngram(submissionIds, codeList, ngrams=(3,3), n_components=50):
     documents = len(codeList)
     tlist, nlist = parse_ast_tokens(codeList)
     df = pd.DataFrame({ "token_stream": tlist, "normalized": nlist })
@@ -96,9 +95,17 @@ def run_ngram(codeList, ngrams=(3,3), n_components=50):
 
     labels_list = labels.tolist()
     clusters = create_clusters(labels_list)
+    true_label_clusters = {k : [submissionIds[i] for i in v] for k, v in clusters.items()}
+    coordinates = [{
+        'id': submissionIds[i],
+        'x': d[0],
+        'y': d[1],
+        'cluster': labels_list[i]
+        } for (i, d) in enumerate(X_embedded)]
     return {
-        "clusters": clusters,
+        "clusters": true_label_clusters,
         "labels": labels_list,
+        "TSNE": coordinates,
         "params": {
             "ngrams": ngrams,
             "n_components": n_components,

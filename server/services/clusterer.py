@@ -7,16 +7,17 @@ def run_ngram(params):
   n_components = params.get('n_components') or 50
   word_filters = params.get('word_filters')
   rows = db.query_many(f"""
-SELECT submission_id, code FROM submission WHERE submission_id = ANY(array{submission_ids}::uuid[])
+SELECT code FROM submission WHERE submission_id = ANY(array{submission_ids}::uuid[])
 """)
-  codeList = [r[1] for r in rows]
+  codeList = [r[0] for r in rows]
   # print(codeList)
-  ngram_result = ngram.run_ngram(codeList, ngrams, n_components)
+  ngram_result = ngram.run_ngram(submission_ids, codeList, ngrams, n_components)
   if word_filters and len(word_filters) > 0:
     filter_result = ngram.group_by_strings(dict(rows), word_filters)
   else:
     filter_result = {}
   return {
+    "model": "ngram",
     "ngram": ngram_result,
     "filter": filter_result
   }
