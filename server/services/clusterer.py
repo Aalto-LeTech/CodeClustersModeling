@@ -2,22 +2,19 @@ from server.services import db
 from server.services.ngram import ngram
 
 def run_ngram(params):
-  submission_ids = params.get('submission_ids')
+  submissions = params.get('submissions')
   ngrams = params.get('ngrams')
   n_components = params.get('n_components') or 50
   word_filters = params.get('word_filters')
-  rows = db.query_many(f"""
-SELECT code FROM submission WHERE submission_id = ANY(array{submission_ids}::uuid[])
-""")
-  codeList = [r[0] for r in rows]
+  submissionIds = [s['id'] for s in submissions]
+  codeList = [s['code'] for s in submissions]
   # print(codeList)
-  ngram_result = ngram.run_ngram(submission_ids, codeList, ngrams, n_components)
+  ngram_result = ngram.run_ngram(submissionIds, codeList, ngrams, n_components)
   if word_filters and len(word_filters) > 0:
     filter_result = ngram.group_by_strings(dict(rows), word_filters)
   else:
     filter_result = {}
   return {
-    "model": "ngram",
     "ngram": ngram_result,
     "filter": filter_result
   }

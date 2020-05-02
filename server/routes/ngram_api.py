@@ -10,8 +10,8 @@ ngram = Blueprint('ngram', __name__)
 @ngram.route('', methods=['POST'])
 def run_ngram_model():
   body = request.get_json()
-  if 'submission_ids' not in body:
-    return 'submission_ids missing from JSON', 400
+  if 'submissions' not in body:
+    return 'submissions missing from JSON', 400
   try:
     clusters = clusterer.run_ngram(body)
     return json.dumps(clusters, cls=NumpyEncoder)
