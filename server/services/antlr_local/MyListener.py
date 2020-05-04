@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from server.services.ngram.antlr_local.JavaParserListener import JavaParserListener
-from server.services.ngram.antlr_local.JavaParser import JavaParser
+from server.services.antlr_local.generated.JavaParserListener import JavaParserListener
+from server.services.antlr_local.generated.JavaParser import JavaParser
 
 class KeyPrinter(JavaParserListener):    
     

@@ -3,7 +3,7 @@ import json
 
 import numpy as np
 from flask import current_app, request, jsonify, send_file, make_response, Blueprint
-from server.services import clusterer
+from server.services.ngram import run_ngram
 
 ngram = Blueprint('ngram', __name__)
 
@@ -13,8 +13,22 @@ def run_ngram_model():
   if 'submissions' not in body:
     return 'submissions missing from JSON', 400
   try:
-    clusters = clusterer.run_ngram(body)
-    return json.dumps(clusters, cls=NumpyEncoder)
+    submissions = body.get('submissions')
+    token_set = body.get('token_set')
+    ngrams = body.get('ngrams')
+    svd_n_components = body.get('svd_n_components')
+    clustering_params = body.get('clustering_params')
+    dim_visualization_params = body.get('dim_visualization_params')
+
+    submissionIds = [s['id'] for s in submissions]
+    codeList = [s['code'] for s in submissions]
+
+    ngram_result = run_ngram(submissionIds, codeList, token_set, ngrams, svd_n_components,
+      clustering_params, dim_visualization_params)
+    response = {
+      "ngram": ngram_result
+    }
+    return json.dumps(response, cls=NumpyEncoder)
   except OSError as e:
     print(traceback.format_exc())
     return 'I am broken', 500
