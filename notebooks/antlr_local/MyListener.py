@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from antlr_local.JavaParserListener import JavaParserListener
-from antlr_local.JavaParser import JavaParser
+from antlr_local.generated.JavaParserListener import JavaParserListener
+from antlr_local.generated.JavaParser import JavaParser
 
 class KeyPrinter(JavaParserListener):    
     
