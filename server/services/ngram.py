@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.manifold import TSNE
 from sklearn.decomposition import TruncatedSVD
 from sklearn import manifold
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, OPTICS, KMeans
 
 import hdbscan
 import umap
@@ -74,14 +74,11 @@ def parse_ast_keywords(codeList):
         rareKeywords[i] = rareTokens
     return keywords, rareKeywords
 
-def create_clusters(labels):
-    clusters = {}
-    for i, c in enumerate(labels):
-        if not c in clusters:
-            clusters[c] = [i]
-        else:
-            clusters[c].append(i)
-    return clusters
+def create_clusters(labels, submissionIds):
+    res = {}
+    for c in set(labels):
+        res[c] = [submissionIds[idx] for idx, label in enumerate(labels) if label == c]
+    return res
 
 def create_token_df(token_set, codeList):
     if token_set == 'modified':
@@ -94,21 +91,41 @@ def create_token_df(token_set, codeList):
 def cluster_dist_matrix(dist_matrix, clustering_params):
     params = clustering_params or {}
     name = params.get('name')
-    if name == 'HDBSCAN':
+    if name == 'DBSCAN' or name is None:
+        min_samples = params.get('min_samples') or 5
+        eps = params.get('eps') or 0.5
+        metric = 'precomputed'
+        dbscan = DBSCAN(min_samples=min_samples, metric=metric, eps=eps).fit(dist_matrix)
+        return dbscan.labels_
+    elif name == 'HDBSCAN':
         min_cluster_size = params.get('min_cluster_size') or 2
-        return_dendrogram = params.get('return_dendrogram') or False
+        min_samples = params.get('min_samples') or 5
+        metric = 'precomputed'
+        show_linkage_tree = params.get('show_linkage_tree') or False
         clusterer = hdbscan.HDBSCAN(
             min_cluster_size=min_cluster_size,
-            gen_min_span_tree=return_dendrogram
+            min_samples=min_samples,
+            metric=metric,
+            gen_min_span_tree=show_linkage_tree
         )
         clusterer.fit(dist_matrix)
         #plt.figure(3, figsize=(24,8)) 
         #clusterer.single_linkage_tree_.plot(cmap='viridis', colorbar=True)
         return clusterer.labels_
+    elif name == 'OPTICS':
+        min_samples = params.get('min_samples') or 5
+        max_eps = params.get('max_eps') or np.inf
+        if max_eps == -1:
+            max_eps = np.inf
+        metric = 'precomputed'
+        optics = OPTICS(min_samples=min_samples, metric=metric, max_eps=max_eps).fit(dist_matrix)
+        return optics.labels_
+    elif name == 'KMeans':
+        n_clusters = params.get('k_clusters') or 8
+        kmeans = KMeans(n_clusters=n_clusters).fit(dist_matrix)
+        return kmeans.labels_
     else:
-        eps = params.get('eps') or 0.05
-        db = DBSCAN(min_samples=2, metric="precomputed", eps=eps).fit(dist_matrix)
-        return db.labels_
+        raise ValueError(f'cluster_dist_matrix(): Unknown clustering method name: {name}')
 
 def reduce_to_2d(X_reduced, dim_visualization_params={}):
     params = dim_visualization_params or {}
@@ -128,11 +145,14 @@ def reduce_to_2d(X_reduced, dim_visualization_params={}):
             perplexity=perplexity
         ).fit_transform(X_reduced)
 
-def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), svd_n_components=50,
+def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), svd_n_components=50, random_seed=-1,
               clustering_params={}, dim_visualization_params={}):
 
     documents = len(codeList)
     df = create_token_df(token_set, codeList)
+
+    if random_seed != -1:
+        np.random.seed(random_seed)
 
     ngram_vectorizer = CountVectorizer(analyzer='word', 
                                        ngram_range=ngrams,
@@ -156,21 +176,17 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), svd_n
     X_reduced = TruncatedSVD(n_components=svd_n_components, random_state=0).fit_transform(tfidf)
     X_embedded = reduce_to_2d(X_reduced, dim_visualization_params)
 
-    labels = cluster_dist_matrix(dist_matrix, clustering_params)
-    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-    unique_labels = set(labels) 
+    labels = cluster_dist_matrix(dist_matrix, clustering_params).tolist()
 
-    labels_list = labels.tolist()
-    clusters = create_clusters(labels_list)
-    true_label_clusters = {k : [submissionIds[i] for i in v] for k, v in clusters.items()}
+    clusters = create_clusters(labels, submissionIds)
     coordinates = [{
         'id': submissionIds[i],
         'x': d[0],
         'y': d[1],
-        'cluster': labels_list[i]
+        'cluster': labels[i]
         } for (i, d) in enumerate(X_embedded)]
 
     return {
-        "clusters": true_label_clusters,
+        "clusters": clusters,
         "2d": coordinates,
     }

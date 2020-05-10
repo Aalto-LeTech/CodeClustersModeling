@@ -17,13 +17,14 @@ def run_ngram_model():
     token_set = body.get('token_set')
     ngrams = body.get('ngrams')
     svd_n_components = body.get('svd_n_components')
+    random_seed = body.get('random_seed')
     clustering_params = body.get('clustering_params')
     dim_visualization_params = body.get('dim_visualization_params')
 
     submissionIds = [s['id'] for s in submissions]
     codeList = [s['code'] for s in submissions]
 
-    ngram_result = run_ngram(submissionIds, codeList, token_set, ngrams, svd_n_components,
+    ngram_result = run_ngram(submissionIds, codeList, token_set, ngrams, svd_n_components, random_seed,
       clustering_params, dim_visualization_params)
     response = {
       "ngram": ngram_result
