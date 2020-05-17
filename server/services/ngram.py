@@ -12,67 +12,9 @@ from sklearn.cluster import DBSCAN, OPTICS, KMeans
 import hdbscan
 import umap
 
-import antlr4
-from antlr4 import RuleContext
-
-from server.services.antlr_local.generated.JavaLexer import JavaLexer
-from server.services.antlr_local.generated.JavaParser import JavaParser
-from server.services.antlr_local.generated.JavaParserListener import JavaParserListener
-from server.services.antlr_local.MyListener import KeyPrinter
-from server.services.antlr_local.java_tokens import interestingTokenTypes, rareTokenTypes
+from server.services.antlr_local.java_parsers import parse_ast_complete, parse_ast_keywords, parse_ast_modified
 
 import re
-
-def normalize_for_ai(source_code):
-    res = re.sub("\/\*.*\*\/", "", source_code, flags=re.DOTALL) # multiline comment
-    res = re.sub("\/\/.*", "", res) # inline comments
-    res = re.sub("\".+\"", "\"\"", res) # string values
-    res = re.sub("\d+", "$", res)
-    return res
-
-def parse_to_compositional_tokens(code):
-    code_stream = antlr4.InputStream(code)
-    lexer = JavaLexer(code_stream)
-    token_stream = antlr4.CommonTokenStream(lexer)
-    parser = JavaParser(token_stream)
-    tree = parser.compilationUnit()
-
-    printer = KeyPrinter()
-    walker = antlr4.ParseTreeWalker()
-    walker.walk(printer, tree)
-
-    return printer.get_result()
-
-def parse_to_keyword_tokens(code):
-    code_stream = antlr4.InputStream(code)
-    lexer = JavaLexer(code_stream)
-    token_stream = antlr4.CommonTokenStream(lexer)
-    parser = JavaParser(token_stream)
-    tree = parser.compilationUnit()
-
-    allTypes = [t.type for t in token_stream.tokens]
-    interestingTokens = [interestingTokenTypes[t] for t in allTypes if t in interestingTokenTypes]
-    rareTokens = [rareTokenTypes[t] for t in allTypes if t in rareTokenTypes]
-    return interestingTokens, rareTokens
-
-def parse_ast_modified(codeList):
-    n = len(codeList)
-    token_list = [None] * n
-    normalized_list = [None] * n
-    for i, c in enumerate(codeList):
-        token_list[i] = parse_to_compositional_tokens(c)
-        normalized_list[i] = normalize_for_ai(c)
-    return token_list, normalized_list
-
-def parse_ast_keywords(codeList):
-    n = len(codeList)
-    keywords = [None] * n
-    rareKeywords = [None] * n
-    for i, c in enumerate(codeList):
-        intTokens, rareTokens = parse_to_keyword_tokens(c)
-        keywords[i] = intTokens
-        rareKeywords[i] = rareTokens
-    return keywords, rareKeywords
 
 def create_clusters(labels, submissionIds):
     res = {}
@@ -82,8 +24,9 @@ def create_clusters(labels, submissionIds):
 
 def create_token_df(token_set, codeList):
     if token_set == 'modified':
-        tlist, nlist = parse_ast_modified(codeList)
-        return pd.DataFrame({ "token_stream": tlist })
+        return pd.DataFrame({ "token_stream": parse_ast_modified(codeList) })
+    elif token_set == 'complete':
+        return pd.DataFrame({ "token_stream": parse_ast_complete(codeList) })
     else:
         keywords, rareKeywords = parse_ast_keywords(codeList)
         return pd.DataFrame({ "token_stream": list(map(lambda x: ' '.join(x), keywords)) })
@@ -115,8 +58,6 @@ def cluster_dist_matrix(dist_matrix, clustering_params):
     elif name == 'OPTICS':
         min_samples = params.get('min_samples') or 5
         max_eps = params.get('max_eps') or np.inf
-        if max_eps == -1:
-            max_eps = np.inf
         metric = 'precomputed'
         optics = OPTICS(min_samples=min_samples, metric=metric, max_eps=max_eps).fit(dist_matrix)
         return optics.labels_
