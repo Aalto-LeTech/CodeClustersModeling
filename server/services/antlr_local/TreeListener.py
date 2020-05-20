@@ -17,11 +17,14 @@ class Node(object):
     def getParent(self):
         return self.parent
     
+    def toList(self):
+        return [self.label] + [l for lst in [c.toList() for c in self.children] for l in lst]
+
     def __str__(self):
         n = f'{self.depth}:{self.label}'
-        s = '\n'.join([n]+[str(c) for c in self.children])
+        s = '\n'.join([n] + [str(c) for c in self.children])
         padding = ' ' * self.depth
-        return f'{padding} {s}'
+        return f'{padding}{s}'
     
     def __len__(self):
         return 1 + sum([len(c) for c in self.children])

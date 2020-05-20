@@ -14,8 +14,6 @@ import umap
 
 from server.services.antlr_local.java_parsers import parse_ast_complete, parse_ast_keywords, parse_ast_modified
 
-import re
-
 def create_clusters(labels, submissionIds):
     res = {}
     for c in set(labels):
@@ -68,25 +66,32 @@ def cluster_dist_matrix(dist_matrix, clustering_params):
     else:
         raise ValueError(f'cluster_dist_matrix(): Unknown clustering method name: {name}')
 
-def reduce_to_2d(X_reduced, dim_visualization_params={}):
+def reduce_to_2d(tfidf, dim_visualization_params={}):
     params = dim_visualization_params or {}
     name = params.get('name')
     if name == 'UMAP':
         n_neighbors = params.get('n_neighbors') or 30
         min_dist = params.get('min_dist') or 0.0
         return umap.UMAP(
+            n_components=2,
             n_neighbors=n_neighbors,
             min_dist=min_dist,
-            n_components=2
-        ).fit_transform(X_reduced)
+        ).fit_transform(tfidf)
     else:
         perplexity = params.get('perplexity') or 30
+        svd_n_components = params.get('svd_n_components')
+        matrix = tfidf
+        if svd_n_components is not None:
+            matrix = TruncatedSVD(
+                n_components=svd_n_components,
+                random_state=0
+            ).fit_transform(tfidf)
         return TSNE(
             n_components=2,
             perplexity=perplexity
-        ).fit_transform(X_reduced)
+        ).fit_transform(matrix)
 
-def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), svd_n_components=50, random_seed=-1,
+def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), random_seed=-1,
               clustering_params={}, dim_visualization_params={}):
 
     documents = len(codeList)
@@ -114,8 +119,7 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), svd_n
     sim_matrix = np.around(cosine_similarity(tfidf), decimals=8)
     dist_matrix = np.subtract(np.ones(sim_matrix.shape, dtype=np.int8), sim_matrix) # sim <=> 1 - dist
 
-    X_reduced = TruncatedSVD(n_components=svd_n_components, random_state=0).fit_transform(tfidf)
-    X_embedded = reduce_to_2d(X_reduced, dim_visualization_params)
+    X_embedded = reduce_to_2d(tfidf, dim_visualization_params)
 
     labels = cluster_dist_matrix(dist_matrix, clustering_params).tolist()
 

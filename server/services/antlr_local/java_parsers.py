@@ -27,7 +27,7 @@ def generate_complete_tree(parentNode, antlrNode, parser):
         elif hasattr(child, 'getSymbol'):
             token_type = getTokenType(child)
             if token_type:
-              n.addChild(Node(parentNode, token_type, depth + 1))
+                n.addChild(Node(parentNode, token_type, depth + 1))
         else:
             print('unknown node')
     return n
@@ -67,7 +67,8 @@ def parse_modified_tokens(code):
     return printer.get_result()
 
 def parse_ast_complete(codeList):
-    return [str(parse_complete_tree(c)) for c in codeList]
+    token_lists = [parse_complete_tree(c).toList() for c in codeList]
+    return list(map(lambda x: ' '.join(x), token_lists))
 
 def parse_ast_keywords(codeList):
     n = len(codeList)
