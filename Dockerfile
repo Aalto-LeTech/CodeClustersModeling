@@ -4,10 +4,13 @@ ENV FLASK_ENV production
 
 WORKDIR /opt/codeclusters-modeling
 
-COPY server ./server
-COPY run.py prod.sh app-requirements.txt ./
-
+COPY app-requirements.txt ./
 RUN pip install -r app-requirements.txt
 RUN pip install psycopg2
 
-CMD ["gunicorn", "-b", "localhost:8500", "run:app"]
+COPY server ./server
+COPY run.py gunicorn-conf.py ./
+
+EXPOSE 8500
+
+CMD ["gunicorn", "-c", "gunicorn-conf.py", "run:app"]
