@@ -19,3 +19,17 @@ def init():
 def query_many(query):
   cur.execute(query)
   return cur.fetchall()
+
+def fetch_submissions(courseId, exerciseId):
+  ex_rows = query_many(f"""
+  SELECT program_language FROM exercise WHERE course_id = {courseId} AND exercise_id = {exerciseId}
+  """)
+  rows = query_many(f"""
+  SELECT submission_id, code FROM submission
+  WHERE course_id = {courseId} AND exercise_id = {exerciseId}
+  """)
+  submissionIds = [r[0] for r in rows]
+  codeList = [r[1] for r in rows]
+  language = ex_rows[0][0]
+
+  return submissionIds, codeList, language

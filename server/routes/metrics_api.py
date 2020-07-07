@@ -3,26 +3,26 @@ import json
 
 import numpy as np
 from flask import current_app, request, jsonify, send_file, make_response, Blueprint
-from server.services.metrics import create_metrics
+from server.services.db import fetch_submissions
+from server.services.solr import update_submission_metrics
+from server.services.metrics import run_metrics
 
 metrics = Blueprint('metrics', __name__)
 
 @metrics.route('', methods=['POST'])
-def run_metrics():
+def run_and_index_metrics():
   body = request.get_json()
-  if 'submissions' not in body:
-    return 'submissions missing from JSON', 400
+  if 'course_id' not in body:
+    return 'course_id missing from JSON', 400
+  if 'exercise_id' not in body:
+    return 'exercise_id missing from JSON', 400
   try:
-    metrics = create_metrics(body)
-    return json.dumps(metrics)
+    courseId = body.get('course_id')
+    exerciseId = body.get('exercise_id')
+    submissionIds, codeLines, language = fetch_submissions(courseId, exerciseId)
+    res = run_metrics(submissionIds, codeLines, language)
+    resp = update_submission_metrics(res)
+    return json.dumps(resp)
   except OSError as e:
     print(traceback.format_exc())
     return 'I am broken', 500
-
-# class NumpyEncoder(json.JSONEncoder):
-#   def default(self, obj):
-#     if isinstance(obj, np.ndarray):
-#       return obj.tolist()
-#     elif isinstance(obj, np.float32):
-#       return np.round(obj.item(), 3)
-#     return json.JSONEncoder.default(self, obj)

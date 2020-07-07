@@ -1,4 +1,6 @@
 import os
 from server import create_app
+from dotenv import load_dotenv
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+load_dotenv()
+app = create_app()
