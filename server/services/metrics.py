@@ -53,6 +53,8 @@ def delete_folder(folderPath):
 def add_loc(res, submissionIds, codeList):
     locs = [len(code.split('\n')) for code in codeList]
     for idx, sub_id in enumerate(submissionIds):
+        if sub_id not in res:
+            res[sub_id] = {}
         res[sub_id]['LOC'] = locs[idx]
     return res
 
@@ -61,8 +63,11 @@ def run_checkstyle(folderPath):
     CHECKSTYLE_XML_PATH = os.getenv("CHECKSTYLE_XML_PATH")
     args = ['java', '-jar', CHECKSTYLE_JAR_PATH, '-c', CHECKSTYLE_XML_PATH, 'com.puppycrawl.tools.checkstyle.gui.Main', f'{folderPath}/']
     checkstyle_result = subprocess.run(args, stdout=PIPE, stderr=PIPE, check=False)
-    decoded = checkstyle_result.stdout.decode(sys.stdout.encoding) + checkstyle_result.stderr.decode(sys.stderr.encoding)
-    return decoded.split('\n')
+    stdout = checkstyle_result.stdout.decode(sys.stdout.encoding)
+    stderr = checkstyle_result.stderr.decode(sys.stderr.encoding)
+    if len(stderr) != 0:
+        raise Exception(f'Running checkstyle throwed an error: {stderr}')
+    return stdout.split('\n')
 
 def generate_result_dict(lines, submissionIds):
     res = {}
@@ -82,7 +87,6 @@ def run_metrics(submissionIds, codeList, language):
     folderPath = ''
     lines = []
     res = {}
-    resp = None
     try:
         folderPath = create_folder(run_id)
         write_files(submissionIds, codeList, file_ext, folderPath)

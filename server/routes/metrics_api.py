@@ -25,4 +25,4 @@ def run_and_index_metrics():
     return json.dumps(resp)
   except OSError as e:
     print(traceback.format_exc())
-    return 'I am broken', 500
+    return 'Internal server error', 500

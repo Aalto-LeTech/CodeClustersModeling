@@ -6,6 +6,8 @@ services:
       context: .
     container_name: modeling
     restart: unless-stopped
+    env_file:
+      - .modeling.env
     ports:
       - 8500:8500
 

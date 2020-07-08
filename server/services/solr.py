@@ -1,10 +1,13 @@
+import os
 import requests
 
-SOLR_URL="http://localhost:8983"
-CORE="submission-search"
+def create_url(path):
+  SOLR_URL = os.getenv("SOLR_URL")
+  SOLR_CORE = os.getenv("SOLR_CORE")
+  return f'{SOLR_URL}/solr/{SOLR_CORE}/{path}'
 
 def add_dynamic_field(fieldName, fieldType="pint"):
-  url = f'{SOLR_URL}/solr/{CORE}/schema?commit=true'
+  url = create_url('schema?commit=true')
   data = {
     "add-dynamic-field": {
       "stored": "true",
@@ -21,7 +24,8 @@ def add_dynamic_field(fieldName, fieldType="pint"):
   return res
 
 def update_submission_metrics(res):
-  url = f'{SOLR_URL}/solr/{CORE}/update?overwrite=true&commit=true'
+  url = create_url('update?overwrite=true&commit=true')
+  print(url)
   def create_solr_updation(d, subId):
     r = { f'{key}_metric': { "set": d[key] } for key in d.keys() }
     r['id'] = subId

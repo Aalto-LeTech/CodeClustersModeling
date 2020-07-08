@@ -31,7 +31,7 @@ def run_ngram_model():
     return json.dumps(response, cls=NumpyEncoder)
   except OSError as e:
     print(traceback.format_exc())
-    return 'I am broken', 500
+    return 'Internal server error', 500
 
 class NumpyEncoder(json.JSONEncoder):
   def default(self, obj):

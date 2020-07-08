@@ -27,3 +27,8 @@ wheels/
 *.egg
 MANIFEST
 .antlr
+
+*.iml
+*.key
+*.crt
+.*.env
