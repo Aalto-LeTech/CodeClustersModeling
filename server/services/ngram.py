@@ -3,6 +3,7 @@ import pandas as pd
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.metrics import silhouette_score
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.manifold import TSNE
 from sklearn.decomposition import TruncatedSVD
@@ -123,6 +124,8 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), rando
 
     labels = cluster_dist_matrix(dist_matrix, clustering_params).tolist()
 
+    silhouette_avg = silhouette_score(X, labels)
+
     clusters = create_clusters(labels, submissionIds)
     coordinates = [{
         'id': submissionIds[i],
@@ -134,4 +137,5 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), rando
     return {
         "clusters": clusters,
         "2d": coordinates,
+        "silhouette_score": silhouette_avg,
     }

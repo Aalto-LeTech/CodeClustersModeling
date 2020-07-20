@@ -2,7 +2,8 @@ import psycopg2
 
 import os
 
-cur = None
+connection = None
+cursor = None
 
 def init():
   POSTGRES_HOST = os.getenv("DB_HOST")
@@ -13,16 +14,25 @@ def init():
 
   conn = psycopg2.connect(host=POSTGRES_HOST, port=POSTGRES_PORT, database=POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD)
 
-  global cur
-  cur = conn.cursor()
+  global connection
+  global cursor
+  connection = conn
+  cursor = conn.cursor()
 
 def query_many(query):
-  cur.execute(query)
-  return cur.fetchall()
+  try:
+    cursor.execute(query)
+    return cursor.fetchall()
+  except:
+    cursor.execute("ROLLBACK")
+    connection.commit()
+    # If the database for some reason shuts down the database connection has to be recreated (it won't do it automatically)
+    init()
+    raise
 
 def fetch_submissions(courseId, exerciseId):
   ex_rows = query_many(f"""
-  SELECT program_language FROM exercise WHERE course_id = {courseId} AND exercise_id = {exerciseId}
+  SELECT programming_language FROM exercise WHERE course_id = {courseId} AND exercise_id = {exerciseId}
   """)
   rows = query_many(f"""
   SELECT submission_id, code FROM submission

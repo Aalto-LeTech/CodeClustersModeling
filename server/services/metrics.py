@@ -14,9 +14,9 @@ USED_CHECKSTYLE_METRICS=[
 ]
 
 def get_file_extension(language):
-    if language == 'Java':
+    if language == 'JAVA':
         return 'java'
-    return ''
+    raise Exception('Unknown programming language: ', language)
 
 def get_metric(line):
     TYPE_MARKER = 'type:'
@@ -33,10 +33,10 @@ def create_folder(runId):
     dir_path = f"{METRICS_FOLDER_PATH}/{runId}"
     try:
         os.makedirs(dir_path)    
-        print("Directory " , dir_path, " created ")
+        print("Directory ", dir_path, " created.")
         return dir_path
     except FileExistsError:
-        print("Directory " , dir_path, " already exists") 
+        print("Directory ", dir_path, " already exists.") 
         return dir_path
 
 def write_files(submissionIds, codeList, fileExt, folderPath):
@@ -49,6 +49,7 @@ def delete_folder(folderPath):
     for file in files:
         os.remove(f'{folderPath}/{file}')
     os.rmdir(folderPath)
+    print('Directory ', folderPath, ' deleted.')
 
 def add_loc(res, submissionIds, codeList):
     locs = [len(code.split('\n')) for code in codeList]
@@ -67,6 +68,8 @@ def run_checkstyle(folderPath):
     stderr = checkstyle_result.stderr.decode(sys.stderr.encoding)
     if len(stderr) != 0:
         raise Exception(f'Running checkstyle throwed an error: {stderr}')
+    if len(stdout) < 100:
+        raise Exception(f'No output produced from checkstyle metrics: {stdout}')
     return stdout.split('\n')
 
 def generate_result_dict(lines, submissionIds):

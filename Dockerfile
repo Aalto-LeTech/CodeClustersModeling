@@ -2,7 +2,7 @@ FROM frolvlad/alpine-miniconda3:python3.7
 
 ENV FLASK_ENV production
 ENV METRICS_FOLDER_PATH /tmp/codeclusters-run-metrics
-ENV CHECKSTYLE_JAR_PATH /opt/codeclusters-modeling/tmp/checkstyle-8.34-all.jar
+ENV CHECKSTYLE_JAR_PATH /opt/codeclusters-modeling/lib/checkstyle-8.34-all.jar
 ENV CHECKSTYLE_XML_PATH /opt/codeclusters-modeling/metrics-checks.xml
 
 WORKDIR /opt/codeclusters-modeling
@@ -21,7 +21,7 @@ COPY app-requirements.txt ./
 RUN pip install psycopg2-binary
 RUN pip install -r app-requirements.txt
 
-WORKDIR /opt/codeclusters-modeling/tmp
+WORKDIR /opt/codeclusters-modeling/lib
 RUN curl -OL https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.34/checkstyle-8.34-all.jar
 WORKDIR /opt/codeclusters-modeling
 
