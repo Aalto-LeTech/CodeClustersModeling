@@ -27,7 +27,7 @@ def generate_complete_tree(parentNode, antlrNode, parser):
         elif hasattr(child, 'getSymbol'):
             token_type = getTokenType(child)
             if token_type:
-              n.addChild(Node(parentNode, token_type, depth + 1))
+                n.addChild(Node(parentNode, token_type, depth + 1))
         else:
             print('unknown node')
     return n

@@ -124,7 +124,10 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), rando
 
     labels = cluster_dist_matrix(dist_matrix, clustering_params).tolist()
 
-    silhouette_avg = silhouette_score(X, labels)
+    if len(np.unique(labels)) > 1:
+        silhouette_avg = silhouette_score(X, labels)
+    else:
+        silhouette_avg = None
 
     clusters = create_clusters(labels, submissionIds)
     coordinates = [{
