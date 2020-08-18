@@ -23,17 +23,23 @@ def add_dynamic_field(fieldName, fieldType="pint"):
   print(res.text)
   return res
 
-def update_submission_metrics(res):
+def update_submission_metrics_and_keywords(metricsDict, keywordsDict, submissionIds):
+  def create_solr_updation(subId):
+    sub_metrics = metricsDict[subId]
+    sub_keywords = keywordsDict[subId]['keywords']
+    sub_rare_keywords = keywordsDict[subId]['rare_keywords']
+    a = { f'{key}_metric': { "set": sub_metrics[key] } for key in sub_metrics.keys() }
+    b = { f'{key}_keywords': { "set": sub_keywords[key] } for key in sub_keywords.keys() }
+    c = { f'{key}_rare_keywords': { "set": sub_rare_keywords[key] } for key in sub_rare_keywords.keys() }
+    res = { **a, **b, **c }
+    res['id'] = subId
+    return res
+
   url = create_url('update?overwrite=true&commit=true')
-  print(url)
-  def create_solr_updation(d, subId):
-    r = { f'{key}_metric': { "set": d[key] } for key in d.keys() }
-    r['id'] = subId
-    return r
-  data = [create_solr_updation(res[sub_id], sub_id) for sub_id in res.keys()]
+  data = [create_solr_updation(sub_id) for sub_id in submissionIds]
   headers = {
     "Content-type": "application/json"
   }
   resp = requests.post(url, json=data, headers=headers)
-  print(resp.text)
+
   return resp.json()
