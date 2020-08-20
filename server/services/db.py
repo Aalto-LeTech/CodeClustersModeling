@@ -23,12 +23,16 @@ def query_many(query):
   try:
     cursor.execute(query)
     return cursor.fetchall()
-  except:
-    cursor.execute("ROLLBACK")
-    connection.commit()
-    # If the database for some reason shuts down the database connection has to be recreated (it won't do it automatically)
-    init()
-    raise
+  except Exception as e:
+    print(e)
+    try:
+      cursor.execute("ROLLBACK")
+      connection.commit()
+      raise
+    except:
+      # Database has shut down for some reason so the database connection has to be recreated (it won't do it automatically)
+      connection.close()
+      init()
 
 def fetch_submissions(courseId, exerciseId):
   ex_rows = query_many(f"""
