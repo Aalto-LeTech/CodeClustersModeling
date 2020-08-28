@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import silhouette_score
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.manifold import TSNE
@@ -101,21 +100,15 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), rando
     if random_seed != -1:
         np.random.seed(random_seed)
 
-    ngram_vectorizer = CountVectorizer(analyzer='word', 
-                                       ngram_range=ngrams,
-                                       token_pattern="[\S]+",
-                                       lowercase=False,
-                                       strip_accents="ascii")
+    tfidf_vectorizer = TfidfVectorizer(max_df=0.95,
+                                    min_df=2,
+                                    analyzer='word', 
+                                    ngram_range=ngrams,
+                                    token_pattern="[\S]+",
+                                    lowercase= False,
+                                    strip_accents="ascii")
 
-    #transformer = TfidfTransformer(smooth_idf=True, norm=None)
-    transformer = TfidfTransformer(smooth_idf=False)
-
-    X = ngram_vectorizer.fit_transform(df.token_stream)
-    tfidf = transformer.fit_transform(X)
-
-    res_tf = pd.DataFrame(X.A, columns=ngram_vectorizer.get_feature_names())
-
-    res_idf = pd.DataFrame(tfidf.A, columns=ngram_vectorizer.get_feature_names())
+    tfidf = tfidf_vectorizer.fit_transform(df.token_stream)
 
     sim_matrix = np.around(cosine_similarity(tfidf), decimals=8)
     dist_matrix = np.subtract(np.ones(sim_matrix.shape, dtype=np.int8), sim_matrix) # sim <=> 1 - dist
@@ -125,7 +118,7 @@ def run_ngram(submissionIds, codeList, token_set='modified', ngrams=(3,3), rando
     labels = cluster_dist_matrix(dist_matrix, clustering_params).tolist()
 
     if len(np.unique(labels)) > 1:
-        silhouette_avg = silhouette_score(X, labels)
+        silhouette_avg = silhouette_score(tfidf, labels)
     else:
         silhouette_avg = None
 
