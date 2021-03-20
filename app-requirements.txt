@@ -9,7 +9,7 @@ gunicorn==20.0.4
 hdbscan==0.8.26
 idna==2.10
 itsdangerous==1.1.0
-Jinja2==2.11.0
+Jinja2==2.11.3
 joblib==0.14.1
 llvmlite==0.32.0
 MarkupSafe==1.1.1
