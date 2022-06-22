@@ -14,7 +14,7 @@ joblib==0.14.1
 llvmlite==0.32.0
 MarkupSafe==1.1.1
 numba==0.49.0
-numpy==1.18.1
+numpy==1.22.0
 pandas==1.0.1
 python-dateutil==2.8.1
 python-dotenv==0.10.5
