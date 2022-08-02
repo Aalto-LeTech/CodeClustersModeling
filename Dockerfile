@@ -1,28 +1,25 @@
-FROM frolvlad/alpine-miniconda3:python3.7
+FROM python:3.10.5-buster
 
 ENV FLASK_ENV production
 ENV METRICS_FOLDER_PATH /tmp/codeclusters-run-metrics
-ENV CHECKSTYLE_JAR_PATH /opt/codeclusters-modeling/lib/checkstyle-8.34-all.jar
+ENV CHECKSTYLE_JAR_PATH /opt/codeclusters-modeling/lib/checkstyle-10.3.2-all.jar
 ENV CHECKSTYLE_XML_PATH /opt/codeclusters-modeling/metrics-checks.xml
 
 WORKDIR /opt/codeclusters-modeling
 
-RUN conda install -c conda-forge hdbscan
+RUN apt-get update \
+  && apt-get -y install postgresql \
+  && apt-get -y install openjdk-11-jdk
 
-RUN apk update \
-  && apk upgrade \
-  && apk add --no-cache bash \
-  && apk add --no-cache --virtual=build-dependencies unzip \
-  && apk add --no-cache curl \
-  && apk add --no-cache postgresql-dev \
-  && apk add --no-cache openjdk8-jre
-
-COPY app-requirements.txt ./
-RUN pip install psycopg2-binary
-RUN pip install -r app-requirements.txt
+COPY requirements.txt ./
+RUN pip install --upgrade pip
+# Basically pip install \
+#   numpy pandas scipy scikit-learn Cython hdbscan umap umap-learn requests antlr4-python3-runtime \
+#   psycopg2-binary gunicorn python-dotenv Flask Flask-Cors matplotlib ipython jupyter pandas sympy nose
+RUN pip install -r requirements.txt
 
 WORKDIR /opt/codeclusters-modeling/lib
-RUN curl -OL https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.34/checkstyle-8.34-all.jar
+RUN curl -OL https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.3.2/checkstyle-10.3.2-all.jar
 WORKDIR /opt/codeclusters-modeling
 
 COPY server ./server

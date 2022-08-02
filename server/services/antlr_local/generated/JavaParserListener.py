@@ -1,4 +1,4 @@
-# Generated from ./JavaParser.g4 by ANTLR 4.8
+# Generated from ./JavaParser.g4 by ANTLR 4.10.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .JavaParser import JavaParser
@@ -314,6 +314,15 @@ class JavaParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by JavaParser#interfaceCommonBodyDeclaration.
+    def enterInterfaceCommonBodyDeclaration(self, ctx:JavaParser.InterfaceCommonBodyDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#interfaceCommonBodyDeclaration.
+    def exitInterfaceCommonBodyDeclaration(self, ctx:JavaParser.InterfaceCommonBodyDeclarationContext):
+        pass
+
+
     # Enter a parse tree produced by JavaParser#variableDeclarators.
     def enterVariableDeclarators(self, ctx:JavaParser.VariableDeclaratorsContext):
         pass
@@ -395,6 +404,15 @@ class JavaParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by JavaParser#receiverParameter.
+    def enterReceiverParameter(self, ctx:JavaParser.ReceiverParameterContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#receiverParameter.
+    def exitReceiverParameter(self, ctx:JavaParser.ReceiverParameterContext):
+        pass
+
+
     # Enter a parse tree produced by JavaParser#formalParameterList.
     def enterFormalParameterList(self, ctx:JavaParser.FormalParameterListContext):
         pass
@@ -419,6 +437,24 @@ class JavaParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by JavaParser#lastFormalParameter.
     def exitLastFormalParameter(self, ctx:JavaParser.LastFormalParameterContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#lambdaLVTIList.
+    def enterLambdaLVTIList(self, ctx:JavaParser.LambdaLVTIListContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#lambdaLVTIList.
+    def exitLambdaLVTIList(self, ctx:JavaParser.LambdaLVTIListContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#lambdaLVTIParameter.
+    def enterLambdaLVTIParameter(self, ctx:JavaParser.LambdaLVTIParameterContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#lambdaLVTIParameter.
+    def exitLambdaLVTIParameter(self, ctx:JavaParser.LambdaLVTIParameterContext):
         pass
 
 
@@ -455,6 +491,15 @@ class JavaParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by JavaParser#floatLiteral.
     def exitFloatLiteral(self, ctx:JavaParser.FloatLiteralContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#altAnnotationQualifiedName.
+    def enterAltAnnotationQualifiedName(self, ctx:JavaParser.AltAnnotationQualifiedNameContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#altAnnotationQualifiedName.
+    def exitAltAnnotationQualifiedName(self, ctx:JavaParser.AltAnnotationQualifiedNameContext):
         pass
 
 
@@ -575,6 +620,87 @@ class JavaParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by JavaParser#moduleDeclaration.
+    def enterModuleDeclaration(self, ctx:JavaParser.ModuleDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#moduleDeclaration.
+    def exitModuleDeclaration(self, ctx:JavaParser.ModuleDeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#moduleBody.
+    def enterModuleBody(self, ctx:JavaParser.ModuleBodyContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#moduleBody.
+    def exitModuleBody(self, ctx:JavaParser.ModuleBodyContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#moduleDirective.
+    def enterModuleDirective(self, ctx:JavaParser.ModuleDirectiveContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#moduleDirective.
+    def exitModuleDirective(self, ctx:JavaParser.ModuleDirectiveContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#requiresModifier.
+    def enterRequiresModifier(self, ctx:JavaParser.RequiresModifierContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#requiresModifier.
+    def exitRequiresModifier(self, ctx:JavaParser.RequiresModifierContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#recordDeclaration.
+    def enterRecordDeclaration(self, ctx:JavaParser.RecordDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#recordDeclaration.
+    def exitRecordDeclaration(self, ctx:JavaParser.RecordDeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#recordHeader.
+    def enterRecordHeader(self, ctx:JavaParser.RecordHeaderContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#recordHeader.
+    def exitRecordHeader(self, ctx:JavaParser.RecordHeaderContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#recordComponentList.
+    def enterRecordComponentList(self, ctx:JavaParser.RecordComponentListContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#recordComponentList.
+    def exitRecordComponentList(self, ctx:JavaParser.RecordComponentListContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#recordComponent.
+    def enterRecordComponent(self, ctx:JavaParser.RecordComponentContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#recordComponent.
+    def exitRecordComponent(self, ctx:JavaParser.RecordComponentContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#recordBody.
+    def enterRecordBody(self, ctx:JavaParser.RecordBodyContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#recordBody.
+    def exitRecordBody(self, ctx:JavaParser.RecordBodyContext):
+        pass
+
+
     # Enter a parse tree produced by JavaParser#block.
     def enterBlock(self, ctx:JavaParser.BlockContext):
         pass
@@ -599,6 +725,15 @@ class JavaParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by JavaParser#localVariableDeclaration.
     def exitLocalVariableDeclaration(self, ctx:JavaParser.LocalVariableDeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#identifier.
+    def enterIdentifier(self, ctx:JavaParser.IdentifierContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#identifier.
+    def exitIdentifier(self, ctx:JavaParser.IdentifierContext):
         pass
 
 
@@ -755,6 +890,15 @@ class JavaParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by JavaParser#pattern.
+    def enterPattern(self, ctx:JavaParser.PatternContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#pattern.
+    def exitPattern(self, ctx:JavaParser.PatternContext):
+        pass
+
+
     # Enter a parse tree produced by JavaParser#lambdaExpression.
     def enterLambdaExpression(self, ctx:JavaParser.LambdaExpressionContext):
         pass
@@ -788,6 +932,42 @@ class JavaParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by JavaParser#primary.
     def exitPrimary(self, ctx:JavaParser.PrimaryContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#switchExpression.
+    def enterSwitchExpression(self, ctx:JavaParser.SwitchExpressionContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#switchExpression.
+    def exitSwitchExpression(self, ctx:JavaParser.SwitchExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#switchLabeledRule.
+    def enterSwitchLabeledRule(self, ctx:JavaParser.SwitchLabeledRuleContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#switchLabeledRule.
+    def exitSwitchLabeledRule(self, ctx:JavaParser.SwitchLabeledRuleContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#guardedPattern.
+    def enterGuardedPattern(self, ctx:JavaParser.GuardedPatternContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#guardedPattern.
+    def exitGuardedPattern(self, ctx:JavaParser.GuardedPatternContext):
+        pass
+
+
+    # Enter a parse tree produced by JavaParser#switchRuleOutcome.
+    def enterSwitchRuleOutcome(self, ctx:JavaParser.SwitchRuleOutcomeContext):
+        pass
+
+    # Exit a parse tree produced by JavaParser#switchRuleOutcome.
+    def exitSwitchRuleOutcome(self, ctx:JavaParser.SwitchRuleOutcomeContext):
         pass
 
 
