@@ -1,10 +1,5 @@
 FROM python:3.10.5-buster
 
-ENV FLASK_ENV production
-ENV METRICS_FOLDER_PATH /tmp/codeclusters-run-metrics
-ENV CHECKSTYLE_JAR_PATH /opt/codeclusters-modeling/lib/checkstyle-10.3.2-all.jar
-ENV CHECKSTYLE_XML_PATH /opt/codeclusters-modeling/metrics-checks.xml
-
 WORKDIR /opt/codeclusters-modeling
 
 RUN apt-get update \
@@ -26,5 +21,10 @@ COPY server ./server
 COPY run.py gunicorn-conf.py metrics/metrics-checks.xml ./
 
 EXPOSE 8500
+
+ENV FLASK_ENV production
+ENV METRICS_FOLDER_PATH /tmp/codeclusters-run-metrics
+ENV CHECKSTYLE_JAR_PATH /opt/codeclusters-modeling/lib/checkstyle-10.3.2-all.jar
+ENV CHECKSTYLE_XML_PATH /opt/codeclusters-modeling/metrics-checks.xml
 
 CMD ["gunicorn", "-c", "gunicorn-conf.py", "run:app"]
